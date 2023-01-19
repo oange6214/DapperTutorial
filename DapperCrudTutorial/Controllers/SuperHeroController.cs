@@ -46,10 +46,27 @@ namespace DapperCrudTutorial.Controllers
 		public async Task<ActionResult<List<SuperHero>>> CreateHero(SuperHero hero)
 		{
 			using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-			await connection.ExecuteAsync("");
-			return Ok(heros);
+			await connection.ExecuteAsync("INSERT INTO SuperHeros (name, firstname, lastname, place) values (@Name, @FirstName, @LastName, @Place)", hero);
+			return Ok(await SelectAllHeroes(connection));
 		}
-		private static async Task<IEnumerable<SuperHero>> SelectAllHeroes(SqlConnection connection)
+
+        [HttpPut]
+        public async Task<ActionResult<List<SuperHero>>> UpdateHero(SuperHero hero)
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            await connection.ExecuteAsync("UPDATE SuperHeros SET name = @name, firstname = @FirstName, lastname = @LastName, place = @Place WHERE id = @Id", hero);
+            return Ok(await SelectAllHeroes(connection));
+        }
+
+        [HttpDelete("{heroId}")]
+        public async Task<ActionResult<List<SuperHero>>> DeleteHero(int heroId)
+        {
+            using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            await connection.ExecuteAsync("DELETE FROM SuperHeros WHERE id = @Id", new { Id = heroId });
+            return Ok(await SelectAllHeroes(connection));
+        }
+
+        private static async Task<IEnumerable<SuperHero>> SelectAllHeroes(SqlConnection connection)
 		{
 			return await connection.QueryAsync<SuperHero>("SELECT * FROM SuperHeros");
 		}
