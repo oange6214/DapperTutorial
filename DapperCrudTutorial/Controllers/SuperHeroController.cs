@@ -16,6 +16,10 @@ namespace DapperCrudTutorial.Controllers
 			_config = config;
 		}
 
+		/// <summary>
+		/// 取得所有 Super Hero
+		/// </summary>
+		/// <returns></returns>
 		[HttpGet]
 		public async Task<ActionResult<List<SuperHero>>> GetAllSuperHeros()
 		{
@@ -47,7 +51,7 @@ namespace DapperCrudTutorial.Controllers
 		{
 			using var connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
 			await connection.ExecuteAsync("");
-			return Ok(heros);
+			return Ok(hero);
 		}
 		private static async Task<IEnumerable<SuperHero>> SelectAllHeroes(SqlConnection connection)
 		{
